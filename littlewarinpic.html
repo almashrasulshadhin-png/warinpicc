@@ -1,0 +1,746 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Warin's Universe</title>
+  <style>
+    :root{
+      --bg:#050814;
+      --bg2:#0a1022;
+      --panel:rgba(10,14,30,.72);
+      --card:rgba(255,255,255,.05);
+      --border:rgba(255,255,255,.12);
+      --text:#eef5ff;
+      --muted:#b8c6e8;
+      --cyan:#81e7ff;
+      --blue:#8aa8ff;
+      --pink:#ff84d4;
+      --shadow:0 12px 32px rgba(0,0,0,.32);
+      --r:20px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(70,160,255,.14), transparent 22%),
+        radial-gradient(circle at 82% 18%, rgba(255,110,205,.12), transparent 22%),
+        radial-gradient(circle at 60% 78%, rgba(147,95,255,.12), transparent 24%),
+        linear-gradient(180deg, #040611, #070b19 42%, #080a14);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    .sky,
+    .sky:before,
+    .sky:after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+    }
+
+    .sky{
+      z-index:-3;
+      background:
+        radial-gradient(2px 2px at 8% 12%, rgba(255,255,255,.9), transparent 55%),
+        radial-gradient(1.5px 1.5px at 22% 35%, rgba(180,220,255,.85), transparent 55%),
+        radial-gradient(1.5px 1.5px at 78% 18%, rgba(255,210,240,.8), transparent 55%),
+        radial-gradient(1px 1px at 62% 27%, rgba(255,255,255,.8), transparent 55%),
+        radial-gradient(2px 2px at 88% 62%, rgba(170,230,255,.8), transparent 55%),
+        radial-gradient(1px 1px at 42% 82%, rgba(255,255,255,.75), transparent 55%),
+        radial-gradient(1.5px 1.5px at 14% 72%, rgba(255,200,240,.7), transparent 55%);
+      background-size:100% 100%;
+      opacity:.9;
+    }
+    .sky:before{
+      z-index:-2;
+      background:
+        radial-gradient(circle at 18% 34%, rgba(80,170,255,.09), transparent 18%),
+        radial-gradient(circle at 72% 28%, rgba(255,106,191,.08), transparent 18%),
+        radial-gradient(circle at 58% 75%, rgba(128,96,255,.08), transparent 20%);
+      filter:blur(28px);
+    }
+    .sky:after{
+      z-index:-1;
+      background:
+        radial-gradient(circle at 78% 14%, rgba(255,255,255,.95), rgba(210,225,255,.9) 35%, rgba(150,175,235,.18) 66%, transparent 68%);
+      width:120px;
+      height:120px;
+      border-radius:50%;
+      top:72px;
+      right:7vw;
+      left:auto;
+      bottom:auto;
+      box-shadow:0 0 34px rgba(180,210,255,.28), 0 0 90px rgba(130,180,255,.12);
+    }
+
+    .wrap{
+      width:min(1320px, calc(100% - 28px));
+      margin:0 auto;
+    }
+
+    .hero{
+      min-height:86vh;
+      display:grid;
+      place-items:center;
+      padding:72px 0 24px;
+    }
+
+    .hero-card{
+      width:min(980px,100%);
+      text-align:center;
+      padding:34px 24px;
+      border:1px solid var(--border);
+      border-radius:30px;
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      backdrop-filter:blur(10px);
+      box-shadow:var(--shadow);
+    }
+
+    .eyebrow{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.24em;
+      color:var(--muted);
+      margin-bottom:12px;
+    }
+
+    h1{
+      margin:0;
+      font-size:clamp(44px,9vw,88px);
+      line-height:.96;
+      letter-spacing:-.04em;
+      font-weight:800;
+      background:linear-gradient(90deg,#fff,#d5e6ff 35%,#8ee5ff 58%,#ffc0e7 88%,#fff);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .subtitle{
+      max-width:760px;
+      margin:16px auto 0;
+      color:#d9e6ff;
+      line-height:1.65;
+      font-size:clamp(15px,2vw,18px);
+    }
+
+    .hero-actions{
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:24px;
+    }
+
+    .btn{
+      appearance:none;
+      border:none;
+      text-decoration:none;
+      cursor:pointer;
+      color:var(--text);
+      padding:13px 18px;
+      border-radius:999px;
+      font-weight:700;
+      background:rgba(255,255,255,.07);
+      border:1px solid var(--border);
+      box-shadow:0 8px 22px rgba(0,0,0,.2);
+      transition:transform .18s ease, border-color .18s ease, background .18s ease;
+      backdrop-filter:blur(8px);
+    }
+    .btn:hover{ transform:translateY(-2px); border-color:rgba(129,231,255,.28); }
+    .btn.primary{ background:linear-gradient(90deg, rgba(95,175,255,.22), rgba(178,110,255,.18), rgba(255,132,212,.2)); }
+    .btn.danger{ background:linear-gradient(90deg, rgba(255,90,120,.2), rgba(255,132,212,.12)); }
+
+    .section{
+      padding:44px 0 78px;
+      position:relative;
+    }
+
+    .section-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:end;
+      gap:16px;
+      flex-wrap:wrap;
+      margin-bottom:20px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:13px;
+      padding:9px 13px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.05);
+      color:#dce8ff;
+      margin-bottom:10px;
+    }
+
+    h2{
+      margin:0;
+      font-size:clamp(28px,4vw,50px);
+      letter-spacing:-.03em;
+    }
+
+    .section-head p{
+      margin:8px 0 0;
+      color:var(--muted);
+      max-width:760px;
+      line-height:1.6;
+    }
+
+    .gallery-shell{
+      padding:16px;
+      border-radius:26px;
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025));
+      backdrop-filter:blur(10px);
+      box-shadow:var(--shadow);
+    }
+
+    .masonry{
+      column-count:4;
+      column-gap:16px;
+    }
+    @media (max-width:1100px){ .masonry{ column-count:3; } }
+    @media (max-width:760px){ .masonry{ column-count:2; } }
+    @media (max-width:520px){ .masonry{ column-count:1; } }
+
+    .photo-card{
+      break-inside:avoid;
+      margin:0 0 16px;
+      position:relative;
+      border-radius:18px;
+      overflow:hidden;
+      background:var(--card);
+      border:1px solid var(--border);
+      box-shadow:0 10px 24px rgba(0,0,0,.24);
+      transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .photo-card:hover{
+      transform:translateY(-4px);
+      border-color:rgba(129,231,255,.24);
+      box-shadow:0 16px 34px rgba(0,0,0,.28);
+    }
+
+    .photo-wrap{
+      width:100%;
+      background:rgba(255,255,255,.03);
+    }
+    .photo-wrap img{
+      display:block;
+      width:100%;
+      height:auto;
+      object-fit:contain;
+      transition:transform .25s ease;
+    }
+    .photo-card:hover img{ transform:scale(1.02); }
+
+    .card-top{
+      position:absolute;
+      top:10px;
+      left:10px;
+      right:10px;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      z-index:2;
+      pointer-events:none;
+    }
+
+    .pill,
+    .edit-btn{
+      pointer-events:auto;
+      background:rgba(6,10,22,.56);
+      border:1px solid rgba(255,255,255,.14);
+      backdrop-filter:blur(8px);
+      color:#eef6ff;
+    }
+
+    .pill{
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+    }
+
+    .edit-btn{
+      width:36px;
+      height:36px;
+      display:grid;
+      place-items:center;
+      border-radius:50%;
+      cursor:pointer;
+      transition:transform .18s ease, border-color .18s ease;
+    }
+    .edit-btn:hover{ transform:scale(1.06); border-color:rgba(129,231,255,.28); }
+
+    .meta{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px 13px 14px;
+    }
+
+    .meta-title{
+      font-size:13px;
+      color:#e5efff;
+      opacity:.9;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:radial-gradient(circle,#fff,var(--cyan));
+      box-shadow:0 0 10px rgba(129,231,255,.45);
+      flex:0 0 auto;
+    }
+
+    .toolbar{
+      position:fixed;
+      left:50%;
+      bottom:16px;
+      transform:translateX(-50%);
+      z-index:30;
+      display:flex;
+      gap:10px;
+      padding:10px;
+      border-radius:999px;
+      background:rgba(8,12,26,.58);
+      border:1px solid var(--border);
+      backdrop-filter:blur(10px);
+      box-shadow:0 12px 28px rgba(0,0,0,.25);
+    }
+
+    .modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      background:rgba(3,5,14,.58);
+      backdrop-filter:blur(8px);
+      z-index:50;
+    }
+    .modal.active{ display:flex; }
+
+    .panel{
+      width:min(520px,100%);
+      border-radius:24px;
+      border:1px solid var(--border);
+      background:var(--panel);
+      box-shadow:0 20px 48px rgba(0,0,0,.42);
+      overflow:hidden;
+    }
+
+    .panel-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:18px 20px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+
+    .panel-head h3{
+      margin:0;
+      font-size:20px;
+    }
+
+    .close-btn{
+      width:38px;
+      height:38px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+      color:#fff;
+      cursor:pointer;
+    }
+
+    .panel-body{
+      padding:18px 20px 20px;
+      display:grid;
+      gap:14px;
+    }
+
+    .field{
+      display:grid;
+      gap:8px;
+    }
+
+    .field label{
+      font-size:13px;
+      color:#dce7ff;
+    }
+
+    .input,.select{
+      width:100%;
+      padding:14px 15px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.11);
+      background:rgba(255,255,255,.06);
+      color:#f3f7ff;
+      outline:none;
+      font:inherit;
+    }
+
+    .input:focus,.select:focus{
+      border-color:rgba(129,231,255,.35);
+      box-shadow:0 0 0 3px rgba(129,231,255,.08);
+    }
+
+    .panel-actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .hint{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .empty{
+      padding:28px 16px;
+      border-radius:18px;
+      border:1px dashed rgba(255,255,255,.14);
+      background:rgba(255,255,255,.03);
+      color:#dce8ff;
+      text-align:center;
+    }
+
+    footer{
+      padding:12px 0 88px;
+      text-align:center;
+      color:var(--muted);
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      *{scroll-behavior:auto !important; transition:none !important}
+    }
+  </style>
+</head>
+<body>
+  <div class="sky"></div>
+
+  <header class="hero">
+    <div class="wrap">
+      <div class="hero-card">
+        <div class="eyebrow">My Moon Memory Gallery</div>
+        <h1>Warin's Universe</h1>
+        <p class="subtitle">
+          Baby, this is for you. I will add every photo I have of you, Nami, and Yuki here, so we can keep these memories safe forever.
+        </p>
+        <div class="hero-actions">
+          <a href="#warin-section" class="btn primary">Explore Warin Gallery</a>
+          <a href="#cat-section" class="btn">Enter Nami and Yuki Galaxy</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="section" id="warin-section">
+      <div class="section-head">
+        <div>
+          <div class="badge">✦ Cosmic Memories</div>
+          <h2>Warin Gallery</h2>
+          <p>Floating glowing frames in space. Images keep their natural aspect ratio and are never cropped.</p>
+        </div>
+      </div>
+      <div class="gallery-shell">
+        <div class="masonry" id="warinGallery"></div>
+      </div>
+    </section>
+
+    <section class="section" id="cat-section">
+      <div class="section-head">
+        <div>
+          <div class="badge">🐾 Cute Cosmic Constellation</div>
+          <h2>Cat Galaxy</h2>
+          <p>A separate cat photo universe with subtle paw styling and the same smooth responsive layout.</p>
+        </div>
+      </div>
+      <div class="gallery-shell">
+        <div class="masonry" id="catGallery"></div>
+      </div>
+    </section>
+
+    <footer>Crafted in starlight for Warin ✦</footer>
+  </main>
+
+  <div class="toolbar">
+    <button class="btn primary" id="openAddBtn">Add New Photo</button>
+    <a class="btn" href="#warin-section">Warin</a>
+    <a class="btn" href="#cat-section">Cat</a>
+  </div>
+
+  <div class="modal" id="photoModal">
+    <div class="panel">
+      <div class="panel-head">
+        <h3 id="modalTitle">Add New Photo</h3>
+        <button class="close-btn" id="closeModalBtn" aria-label="Close">✕</button>
+      </div>
+      <div class="panel-body">
+        <div class="field">
+          <label for="imageUrl">Paste Image URL</label>
+          <input id="imageUrl" class="input" type="url" placeholder="https://example.com/photo.jpg">
+        </div>
+
+        <div class="field" id="galleryField">
+          <label for="gallerySelect">Choose Gallery</label>
+          <select id="gallerySelect" class="select">
+            <option value="warin">Warin Gallery</option>
+            <option value="cat">Cat Galaxy</option>
+          </select>
+        </div>
+
+        <div class="hint">Photos are saved in LocalStorage and remain after refresh.</div>
+
+        <div class="panel-actions" id="addActions">
+          <button class="btn" id="cancelAddBtn">Cancel</button>
+          <button class="btn primary" id="submitAddBtn">Add Photo</button>
+        </div>
+
+        <div class="panel-actions" id="editActions" style="display:none;">
+          <button class="btn danger" id="deletePhotoBtn">Delete Photo</button>
+          <button class="btn" id="cancelEditBtn">Cancel</button>
+          <button class="btn primary" id="saveEditBtn">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'warins-universe-lite-v1';
+
+    function makeId(){
+      return 'p_' + Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
+    }
+
+    const defaultData = {
+      warin: [
+        { id: makeId(), url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80' },
+        { id: makeId(), url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80' },
+        { id: makeId(), url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1200&q=80' }
+      ],
+      cat: [
+        { id: makeId(), url: 'https://images.unsplash.com/photo-1519052537078-e6302a4968d4?auto=format&fit=crop&w=1200&q=80' },
+        { id: makeId(), url: 'https://images.unsplash.com/photo-1511044568932-338cba0ad803?auto=format&fit=crop&w=1200&q=80' },
+        { id: makeId(), url: 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&w=1200&q=80' }
+      ]
+    };
+
+    function clone(obj){ return JSON.parse(JSON.stringify(obj)); }
+
+    function loadData(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return clone(defaultData);
+        const parsed = JSON.parse(raw);
+        return {
+          warin: Array.isArray(parsed.warin) ? parsed.warin : [],
+          cat: Array.isArray(parsed.cat) ? parsed.cat : []
+        };
+      }catch(e){
+        return clone(defaultData);
+      }
+    }
+
+    let state = loadData();
+    let editState = null;
+
+    const warinGallery = document.getElementById('warinGallery');
+    const catGallery = document.getElementById('catGallery');
+    const modal = document.getElementById('photoModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const imageUrlInput = document.getElementById('imageUrl');
+    const gallerySelect = document.getElementById('gallerySelect');
+    const galleryField = document.getElementById('galleryField');
+    const addActions = document.getElementById('addActions');
+    const editActions = document.getElementById('editActions');
+
+    function saveData(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function validUrl(v){
+      try{
+        const u = new URL(v);
+        return /^https?:/.test(u.protocol);
+      }catch(e){
+        return false;
+      }
+    }
+
+    function hostLabel(url){
+      try{
+        return new URL(url).hostname.replace('www.','');
+      }catch(e){
+        return 'starlit memory';
+      }
+    }
+
+    function esc(s){
+      return String(s).replace(/[&<>"']/g, m => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[m]));
+    }
+
+    function cardHTML(photo, gallery){
+      const label = gallery === 'cat' ? '🐾 Cat Star' : '✦ Warin Star';
+      const alt = gallery === 'cat' ? 'Cat Galaxy photo' : 'Warin Gallery photo';
+      return `
+        <article class="photo-card" data-id="${photo.id}" data-gallery="${gallery}">
+          <div class="card-top">
+            <div class="pill">${label}</div>
+            <button class="edit-btn" aria-label="Edit photo" title="Edit photo">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 20h4l10.5-10.5a2.121 2.121 0 1 0-3-3L5 17v3Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="m13.5 6.5 3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <div class="photo-wrap">
+            <img loading="lazy" decoding="async" referrerpolicy="no-referrer" src="${esc(photo.url)}" alt="${alt}">
+          </div>
+          <div class="meta">
+            <div class="meta-title">${esc(hostLabel(photo.url))}</div>
+            <div class="dot"></div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderGallery(el, items, gallery){
+      if(!items.length){
+        el.innerHTML = `<div class="empty">${gallery === 'cat' ? 'No cat photos in orbit yet. 🐾' : 'No Warin photos in orbit yet. ✦'}</div>`;
+        return;
+      }
+      el.innerHTML = items.map(item => cardHTML(item, gallery)).join('');
+    }
+
+    function renderAll(){
+      renderGallery(warinGallery, state.warin, 'warin');
+      renderGallery(catGallery, state.cat, 'cat');
+    }
+
+    function openModal(){
+      modal.classList.add('active');
+      setTimeout(() => imageUrlInput.focus(), 30);
+    }
+
+    function closeModal(){
+      modal.classList.remove('active');
+    }
+
+    function openAddModal(){
+      editState = null;
+      modalTitle.textContent = 'Add New Photo';
+      galleryField.style.display = '';
+      addActions.style.display = 'flex';
+      editActions.style.display = 'none';
+      imageUrlInput.value = '';
+      gallerySelect.value = 'warin';
+      openModal();
+    }
+
+    function openEditModal(id, gallery){
+      const item = state[gallery].find(x => x.id === id);
+      if(!item) return;
+      editState = { id, gallery };
+      modalTitle.textContent = 'Edit Photo';
+      galleryField.style.display = 'none';
+      addActions.style.display = 'none';
+      editActions.style.display = 'flex';
+      imageUrlInput.value = item.url;
+      openModal();
+    }
+
+    function addPhoto(){
+      const url = imageUrlInput.value.trim();
+      const gallery = gallerySelect.value;
+      if(!validUrl(url)){
+        imageUrlInput.focus();
+        return;
+      }
+      state[gallery].unshift({ id: makeId(), url });
+      saveData();
+      renderAll();
+      closeModal();
+      document.getElementById(gallery === 'cat' ? 'cat-section' : 'warin-section')
+        .scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+
+    function saveEdit(){
+      if(!editState) return;
+      const url = imageUrlInput.value.trim();
+      if(!validUrl(url)){
+        imageUrlInput.focus();
+        return;
+      }
+      const item = state[editState.gallery].find(x => x.id === editState.id);
+      if(!item) return;
+      item.url = url;
+      saveData();
+      renderAll();
+      closeModal();
+    }
+
+    function deletePhoto(){
+      if(!editState) return;
+      state[editState.gallery] = state[editState.gallery].filter(x => x.id !== editState.id);
+      saveData();
+      renderAll();
+      closeModal();
+    }
+
+    document.getElementById('openAddBtn').addEventListener('click', openAddModal);
+    document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+    document.getElementById('cancelAddBtn').addEventListener('click', closeModal);
+    document.getElementById('cancelEditBtn').addEventListener('click', closeModal);
+    document.getElementById('submitAddBtn').addEventListener('click', addPhoto);
+    document.getElementById('saveEditBtn').addEventListener('click', saveEdit);
+    document.getElementById('deletePhotoBtn').addEventListener('click', deletePhoto);
+
+    modal.addEventListener('click', e => {
+      if(e.target === modal) closeModal();
+    });
+
+    document.addEventListener('keydown', e => {
+      if(e.key === 'Escape') closeModal();
+      if(e.key === 'Enter' && modal.classList.contains('active')){
+        editState ? saveEdit() : addPhoto();
+      }
+    });
+
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('.edit-btn');
+      if(!btn) return;
+      const card = btn.closest('.photo-card');
+      if(!card) return;
+      openEditModal(card.dataset.id, card.dataset.gallery);
+    });
+
+    renderAll();
+  </script>
+</body>
+</html>
+```
